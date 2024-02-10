@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  conda:
+    build: .
+    image: conda-test
+    hostname: conda
+    container_name: conda
+    restart: on-failure
+    environment:
+      - DEBUG=${DEBUG}
+      - SECRET_KEY=${SECRET_KEY}
+    command: sh -c "conda run gunicorn -k gevent --workers 4 config.wsgi:application -b 0.0.0.0:8000"
+    expose:
+      - 8000
+    ports:
+      - 8000:8000

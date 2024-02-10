@@ -1,0 +1,32 @@
+name: develope applications
+
+on:
+    workflow_dispatch:
+
+env:
+    TARGET_SERVER: server-deployment
+    SUDO_PASSWORD: ${{ secrets.SUDO_PASSWORD }}
+    DEBUG: 'False'
+    SECRET_KEY: ${{ secrets.SECRET_KEY }}
+    DOCKER_USERNAME: "behzad-azadi2693"
+    DOCKER_PASSWORD: ${{ secrets.TOKEN }}
+
+jobs:
+    pull-image:
+        runs-on: self-hosted
+        steps:
+            - name: pull image
+              run: |
+                echo $SUDO_PASSWORD | sudo -Sv
+                sudo docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+                sudo docker push $DOCKER_USERNAME/conda-test:v1
+
+    run-app:
+        runs-on: self-hosted
+        needs:
+            - pull-image
+        steps:            
+            - name: Create image
+              run: |
+                echo $SUDO_PASSWORD | sudo -Sv
+                

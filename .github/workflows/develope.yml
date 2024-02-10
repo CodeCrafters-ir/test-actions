@@ -1,0 +1,71 @@
+name: develope applications
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  TARGET_SERVER: server-developer
+  SUDO_PASSWORD: ${{ secrets.SUDO_PASSWORD }}
+  DEBUG: 'True'
+  SECRET_KEY: ${{ secrets.SECRET_KEY }}
+  DOCKER_USERNAME: 'behzadazadi2693'
+  DOCKER_PASSWORD: $"{{ secrets.DOCKER_PASSWORD }}"
+  GITHUB_USERNAME: "CodeCrafters-ir"
+  GITHUB_TOKEN: ${{ secrets.TOKEN }}
+  GITHUB_URL: github.com/behzad-azadi2693/test-action.git
+
+jobs:
+  test:
+    runs-on: self-hosted
+    container:
+      image: python:slim-bullseye
+    steps:
+      - name: Run Django tests
+        run: |
+          pip install django
+          python manage.py test
+
+  pull:
+    runs-on: self-hosted
+    needs: 
+      - test
+    steps:
+      - name: pull from github
+        run: |
+          echo $DEBUG 
+          echo $SUDO_PASSWORD | sudo -Sv
+          cd /var/www/test-action
+          sudo git pull https://$GITHUB_USERNAME:$GITHUB_TOKEN@$GITHUB_URL
+
+  dockerize:
+    runs-on: self-hosted
+    needs:
+      - pull
+    steps:            
+      - name: Create image
+        run: |
+          echo $SUDO_PASSWORD | sudo -Sv
+          cd /var/www/test-action
+          sudo docker build . -t conda-test --no-cache
+
+      - name: Run container
+        run: |
+          echo $DEBUG
+          echo $SUDO_PASSWORD | sudo -Sv
+          cd /var/www/test-action
+          sudo docker compose down
+          sudo docker compose up -d
+
+  # push-image:
+  #   runs-on: self-hosted
+  #   needs:
+  #     - dockerize
+  #   steps:
+  #     - name: push image to docker account
+  #       run: |
+  #         echo $SUDO_PASSWORD | sudo -Sv
+  #         sudo docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+  #         sudo docker tag conda-test $DOCKER_USERNAME/conda-test:v1
+  #         sudo docker push $DOCKER_USERNAME/conda-test:v1
