@@ -8,7 +8,7 @@ services:
     container_name: conda
     restart: on-failure
     environment:
-      - DEBUG: ${{ DEBUG }}
+      - DEBUG: ${{ secrets.DEBUG }}
       - SECRET_KEY: ${{ secrets.SECRET_KEY }}
     command: sh -c "conda run gunicorn -k gevent --workers 4 config.wsgi:application -b 0.0.0.0:8000"
     expose:
