@@ -12,7 +12,7 @@ env:
   SECRET_KEY: ${{ secrets.SECRET_KEY }}
   DOCKER_USERNAME: 'behzadazadi2693'
   DOCKER_PASSWORD: $"{{ secrets.DOCKER_PASSWORD }}"
-  GITHUB_USERNAME: "CodeCrafters-ir"
+  GITHUB_USERNAME: "behzad-azadi2693"
   GITHUB_TOKEN: ${{ secrets.TOKEN }}
   GITHUB_URL: github.com/behzad-azadi2693/test-action.git
 
