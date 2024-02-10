@@ -1,4 +1,4 @@
-name: develope applications
+name: develope application
 
 on:
   push:
